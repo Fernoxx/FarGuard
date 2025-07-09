@@ -1,0 +1,12 @@
+{
+  "name": "FarGuard",
+  "description": "FarGuard is a simple Farcaster miniapp built to help users stay safe by revoking token allowances across multiple chains.",
+  "entrypoint": "https://3cfe3f4fe5d4.ngrok-free.app",
+  "iconUrl": "https://3cfe3f4fe5d4.ngrok-free.app/farguard-icon.png",
+  "scopes": ["signer"],
+  "accountAssociation": {
+    "header": "eyJmaWQiOjI0MjU5NywidHlwZSI6ImN1c3RvZHkiLCJrZXkiOiIweDc1OUUxOWQ3MDQzNTdmZkMwODAxNTg5RDc3OTg1M2JkZWVkODkwNTMifQ",
+    "payload": "eyJkb21haW4iOiIzY2ZlM2Y0ZmU1ZDQubmdyb2stZnJlZS5hcHAifQ",
+    "signature": "MHhhYmRmYTJkZTE4ZWNlN2JkZDkyOGY0NzMxODYyODkxOThlMjlhYjhhY2ZhZGZhYTQwNTNlOTU1ODNmZWE2NGY4MDAxYTQzZWFmNjNlYWQzYzRlYWIyZDM2YWQ3MjAzM2MxYjkzM2RiMDUxNmRjYTJiYzI5NGYzZDI3MDFhNTFlYjFi"
+  }
+}
