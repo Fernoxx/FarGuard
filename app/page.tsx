@@ -6,16 +6,13 @@ import { fetchERC20Approvals } from '../lib/fetchERC20Approvals'
 import { fetchNFTApprovals } from '../lib/fetchNFTApprovals'
 
 export default function HomePage() {
-  // Wagmi hooks
-  const { connect, connectors, error: connectError } = useConnect()
+  const { connect, connectors, error: connectError, status } = useConnect()
   const { address, isConnected } = useAccount()
   const publicClient = usePublicClient()
 
-  // Local state for approvals
   const [erc20Approvals, setErc20Approvals] = useState<any[]>([])
-  const [nftApprovals,  setNftApprovals ] = useState<any[]>([])
+  const [nftApprovals, setNftApprovals] = useState<any[]>([])
 
-  // When we get an address, fetch approvals
   useEffect(() => {
     if (isConnected && address) {
       fetchERC20Approvals('ethereum', address, publicClient).then(setErc20Approvals)
@@ -25,25 +22,26 @@ export default function HomePage() {
 
   return (
     <main style={{ padding: 16 }}>
-      { !isConnected && (
+      {!isConnected && (
         <div>
           <h1>Connect Your Farcaster Wallet</h1>
           {connectors.map((connector) => (
             <button
               key={connector.id}
               onClick={() => connect({ connector })}
-              disabled={!connector.ready}
+              disabled={!connector.ready || status === 'connecting'}
               style={{ display: 'block', margin: '8px 0' }}
             >
               {connector.name}
               {!connector.ready && ' (unsupported)'}
+              {status === 'connecting' && connector.id === connectors[0].id && '…'}
             </button>
           ))}
           {connectError && <p style={{ color: 'red' }}>{connectError.message}</p>}
         </div>
       )}
 
-      { isConnected && (
+      {isConnected && (
         <>
           <h1>Connected as {address}</h1>
 
@@ -54,7 +52,6 @@ export default function HomePage() {
                 {erc20Approvals.map((a) => (
                   <li key={`${a.token}-${a.spender}`}>
                     {a.symbol} → {a.spender} (allowance: {a.allowance})
-                    {/* TODO: add a Revoke button that calls your revokeERC20(a) */}
                   </li>
                 ))}
               </ul>
@@ -70,7 +67,6 @@ export default function HomePage() {
                 {nftApprovals.map((a) => (
                   <li key={`${a.contract}-${a.spender}`}>
                     {a.name} → {a.spender}
-                    {/* TODO: add a Revoke button that calls your revokeNFT(a) */}
                   </li>
                 ))}
               </ul>
