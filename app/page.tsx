@@ -7,7 +7,7 @@ import { fetchNFTApprovals } from '../lib/fetchNFTApprovals'
 
 export default function HomePage() {
   // Wagmi hooks
-  const { connect, connectors, isConnecting, error: connectError } = useConnect()
+  const { connect, connectors, error: connectError } = useConnect()
   const { address, isConnected } = useAccount()
   const publicClient = usePublicClient()
 
@@ -32,12 +32,11 @@ export default function HomePage() {
             <button
               key={connector.id}
               onClick={() => connect({ connector })}
-              disabled={!connector.ready || isConnecting}
+              disabled={!connector.ready}
               style={{ display: 'block', margin: '8px 0' }}
             >
               {connector.name}
               {!connector.ready && ' (unsupported)'}
-              {isConnecting && connector.id === connectors[0].id && '…'}
             </button>
           ))}
           {connectError && <p style={{ color: 'red' }}>{connectError.message}</p>}
@@ -84,4 +83,3 @@ export default function HomePage() {
     </main>
   )
 }
-
