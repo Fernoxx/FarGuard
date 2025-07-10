@@ -1,80 +1,41 @@
 'use client'
 
-import { useState, useEffect } from 'react'
-import { useConnect, useAccount, usePublicClient } from 'wagmi'
-import { fetchERC20Approvals } from '../lib/fetchERC20Approvals'
-import { fetchNFTApprovals } from '../lib/fetchNFTApprovals'
+import { useAccount, useConnect, useDisconnect, useEnsAvatar, useEnsName, usePublicClient } from 'wagmi'
 
 export default function HomePage() {
-  const { connect, connectors, error: connectError, status } = useConnect()
+  // Wagmi hooks
+  const { connect, connectors, error: connectError } = useConnect()
   const { address, isConnected } = useAccount()
   const publicClient = usePublicClient()
-
-  const [erc20Approvals, setErc20Approvals] = useState<any[]>([])
-  const [nftApprovals, setNftApprovals] = useState<any[]>([])
-
-  useEffect(() => {
-    if (isConnected && address) {
-      fetchERC20Approvals('ethereum', address, publicClient).then(setErc20Approvals)
-      fetchNFTApprovals('ethereum', address, publicClient).then(setNftApprovals)
-    }
-  }, [isConnected, address, publicClient])
+  const { disconnect } = useDisconnect()
 
   return (
-    <main style={{ padding: 16 }}>
-      {!isConnected && (
+    <main className="flex min-h-screen flex-col items-center justify-center p-8">
+      <h1 className="text-2xl font-bold mb-4">Revoke All Contracts</h1>
+
+      {!isConnected ? (
         <div>
-          <h1>Connect Your Farcaster Wallet</h1>
           {connectors.map((connector) => (
             <button
-              key={connector.id}
+              key={connector.uid}
               onClick={() => connect({ connector })}
-              disabled={!connector.ready || status === 'connecting'}
-              style={{ display: 'block', margin: '8px 0' }}
+              className="border border-gray-400 rounded px-4 py-2 m-2"
             >
-              {connector.name}
-              {!connector.ready && ' (unsupported)'}
-              {status === 'connecting' && connector.id === connectors[0].id && '…'}
+              Connect Wallet ({connector.name})
             </button>
           ))}
-          {connectError && <p style={{ color: 'red' }}>{connectError.message}</p>}
+          {connectError && <div className="text-red-500">{connectError.message}</div>}
         </div>
-      )}
-
-      {isConnected && (
-        <>
-          <h1>Connected as {address}</h1>
-
-          <section>
-            <h2>ERC20 Approvals</h2>
-            {erc20Approvals.length > 0 ? (
-              <ul>
-                {erc20Approvals.map((a) => (
-                  <li key={`${a.token}-${a.spender}`}>
-                    {a.symbol} → {a.spender} (allowance: {a.allowance})
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No ERC20 approvals</p>
-            )}
-          </section>
-
-          <section style={{ marginTop: 24 }}>
-            <h2>NFT Approvals</h2>
-            {nftApprovals.length > 0 ? (
-              <ul>
-                {nftApprovals.map((a) => (
-                  <li key={`${a.contract}-${a.spender}`}>
-                    {a.name} → {a.spender}
-                  </li>
-                ))}
-              </ul>
-            ) : (
-              <p>No NFT approvals</p>
-            )}
-          </section>
-        </>
+      ) : (
+        <div>
+          <p className="mb-4">Connected: {address}</p>
+          <button
+            onClick={() => disconnect()}
+            className="border border-red-400 text-red-600 rounded px-4 py-2"
+          >
+            Disconnect
+          </button>
+        </div>
       )}
     </main>
   )
