@@ -1,21 +1,22 @@
-import { createConfig, http } from 'wagmi'
-import { mainnet, base, arbitrum } from 'wagmi/chains'
-import { farcasterFrame } from '@farcaster/frame-wagmi-connector'  // ← use this factory function :contentReference[oaicite:0]{index=0}
+"use client"
 
-const chains = [mainnet, base, arbitrum]
+import { getDefaultConfig } from "@rainbow-me/rainbowkit"
+import { createConfig, http } from "wagmi"
+import { base, mainnet, arbitrum } from "wagmi/chains"
 
-export const wagmiConfig = createConfig({
-  autoConnect: true,
-  chains,
-  transports: {
-    [mainnet.id]:  http(process.env.NEXT_PUBLIC_ETHEREUM_RPC!),
-    [base.id]:     http(process.env.NEXT_PUBLIC_BASE_RPC!),
-    [arbitrum.id]: http(process.env.NEXT_PUBLIC_ARBITRUM_RPC!),
-  },
-  connectors: [
-    farcasterFrame(),  // ← call the factory, do not use `new`
-  ],
-})
+export const config = createConfig(
+  getDefaultConfig({
+    appName: "FarGuard",
+    projectId: "YOUR_WALLETCONNECT_PROJECT_ID", // replace with actual ID
+    chains: [mainnet, base, arbitrum],
+    transports: {
+      [mainnet.id]: http(),
+      [base.id]: http(),
+      [arbitrum.id]: http(),
+    },
+    ssr: true,
+  })
+)
 
 
 
